@@ -192,9 +192,10 @@ class ImageLabelingActivity : AppCompatActivity() {
     input_name.setText("")
     }
 
-    private fun deleteUser(selectedBarcode : DB) {
+    private fun deleteBarcode(selectedBarcode : DB) {
         mDatabaseReference.child("Barcode")
             .child(selectedBarcode.name)
+            .child(selectedBarcode.id)
             .removeValue()
         clearEditText()
     }
