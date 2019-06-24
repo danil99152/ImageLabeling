@@ -3,10 +3,7 @@ package com.example.imagelabeling
 import android.graphics.*
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.Switch
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -143,6 +140,10 @@ class ImageLabelingActivity : AppCompatActivity() {
             }
     }
 
+    //получаем точку входа для базы данных
+    private val mFirebaseDatabase = FirebaseDatabase.getInstance()
+    //получаем ссылку для работы с базой данных
+    private val mDatabaseReference = mFirebaseDatabase.getReference()
     private fun scanBarcode(barcodes: List<FirebaseVisionBarcode>?, image: Bitmap?) {
         if (barcodes == null || image == null) {
             Toast.makeText(this, "There was some error", Toast.LENGTH_SHORT).show()
@@ -162,10 +163,6 @@ class ImageLabelingActivity : AppCompatActivity() {
         //инициализируем наше приложение для Firebase согласно параметрам в google-services.json
         // (google-services.json - файл, с настройками для firebase, кот. мы получили во время регистрации)
         FirebaseApp.initializeApp(this)
-        //получаем точку входа для базы данных
-        val mFirebaseDatabase = FirebaseDatabase.getInstance()
-        //получаем ссылку для работы с базой данных
-        val mDatabaseReference = mFirebaseDatabase.getReference()
         for ((index, barcode) in barcodes.withIndex()) {
 
             canvas.drawRect(barcode.boundingBox, rectPaint)
@@ -176,6 +173,30 @@ class ImageLabelingActivity : AppCompatActivity() {
                 .child("name").toString()
             Toast.makeText(this, name, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private val input_name = findViewById<EditText>(R.id.name)
+    private val input_id = findViewById<EditText>(R.id.id)
+
+    private fun createBarcode() {
+    //создаем элемент класса DB
+    val db  = DB(input_name.getText().toString(), //берем данные имени и значения баркода из полей ввода
+        input_id.getText().toString())
+    //сохраняем данные в базе данных Firebase по пути Barcode
+    mDatabaseReference.child("Barcode").setValue(db)
+    //очищаем поля ввода
+    clearEditText()
+    }
+    private fun clearEditText() {
+    input_id.setText("")
+    input_name.setText("")
+    }
+
+    private fun deleteUser(selectedBarcode : DB) {
+        mDatabaseReference.child("Barcode")
+            .child(selectedBarcode.name)
+            .removeValue()
+        clearEditText()
     }
 
     private fun showProgress() {
