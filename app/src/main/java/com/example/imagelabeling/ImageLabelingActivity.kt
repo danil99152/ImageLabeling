@@ -26,9 +26,7 @@ import kotlin.collections.ArrayList
 class ImageLabelingActivity : AppCompatActivity() {
 
     private val imageView by lazy { findViewById<ImageView>(R.id.image_labeling_image_view)!! }
-
     private val barcodeornot by lazy {findViewById<Switch>(R.id.barcodeornot)}
-
     private var cameraFacing: Facing = Facing.BACK
     private val bottomSheetButton by lazy { findViewById<FrameLayout>(R.id.bottom_sheet_button)!! }
     private val bottomSheetRecyclerView by lazy { findViewById<RecyclerView>(R.id.bottom_sheet_recycler_view)!! }
